@@ -7,7 +7,8 @@ def check_reboot():
     """Returns true if vm has pending rebooted"""
     return os.path.exists("/run/reboot-required")
 
-def check_disk_full(disk, min_gb, min_percent):
+
+def check_disk_full(disk, min_percent, min_gb):
     """Retruns true if there is not enaugh disk space other wise false"""
     du = shutil.disk_usage(disk)
     #calculate the percentage of free space
