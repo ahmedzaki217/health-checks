@@ -2,6 +2,7 @@
 import os
 import sys
 import shutil
+import psutil
         
 def check_reboot():
     """Returns true if vm has pending rebooted"""
@@ -23,9 +24,12 @@ def check_disk_full(disk, min_percent, min_gb):
 def check_root_full():
     """Returns true if root partition is full"""
     return check_disk_full(disk="/", min_gb = 2, min_percent = 10)
+def check_cpu_constrained():
+    """Return True if cpu have too much usage, false otherwise"""
+    return psutil.cpu_percent(1) > 75
     
 def main():
-    checks=[(check_reboot, "Pending Reboot"), (check_root_full, "root partition is full.")]
+    checks=[(check_reboot, "Pending Reboot"), (check_root_full, "root partition is full."), (check_cpu_constrained, "CPU load is too high")]
     everything_ok = True
     for check, msg in checks:
         if check():
