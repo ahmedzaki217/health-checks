@@ -4,12 +4,13 @@ import sys
 import shutil
 import psutil
 import socket
-        
+from memory_profiler import profile
+@profile        
 def check_reboot():
     """Returns true if vm has pending rebooted"""
     return os.path.exists("/run/reboot-required")
 
-
+@profile
 def check_disk_full(disk, min_percent, min_gb):
     """Retruns true if there is not enaugh disk space other wise false"""
     du = shutil.disk_usage(disk)
@@ -21,7 +22,7 @@ def check_disk_full(disk, min_percent, min_gb):
     if percent_free < min_percent or gigabytes_free < min_gb:
         return True
     return False
-
+@profile
 def check_root_full():
     """Returns true if root partition is full"""
     return check_disk_full(disk="/", min_gb = 2, min_percent = 10)
@@ -29,7 +30,7 @@ def check_root_full():
 def check_cpu_constrained():
     """Return True if cpu have too much usage, false otherwise"""
     return psutil.cpu_percent(1) > 75
-    
+@profile    
 def check_no_network():
     """Return True if it fails to resolve Google's URL, False otherwise"""
     try:
@@ -38,7 +39,7 @@ def check_no_network():
     except:
         return True
         
-            
+@profile            
 def main():
     checks=[(check_reboot, "Pending Reboot"), (check_root_full, "root partition is full.")
     ,(check_no_network, "No working network."), (check_cpu_constrained, "CPU load is too high")]
@@ -51,4 +52,5 @@ def main():
         sys.exit(1)
     print("Everything ok.")
     sys.exit(0)
+
 main()
